@@ -1,47 +1,36 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Swipe Spark - Chat</title>
-  <style>
-    body { font-family: Arial; }
-    #messages { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll; }
-    input, button { padding: 10px; margin-top: 5px; }
-  </style>
-</head>
-<body>
-  <h2>Welcome <%= name %> 👋</h2>
-  <p>Your ID: <%= userId %></p>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+  const messages = document.getElementById('messages');
 
-  <div id="messages"></div>
-  <input id="input" placeholder="Type a message" />
-  <button onclick="send()">Send</button>
-  <br><br>
-  <button onclick="newChat()">💬 New Chat</button>
+  // Join with userId
+  socket.emit('join', "<%= userId %>");
 
-  <script src="/socket.io/socket.io.js"></script>
-  <script>
-    const socket = io();
-    const messages = document.getElementById('messages');
+  // Handle new message
+  socket.on('chat message', data => {
+    const div = document.createElement('div');
+    div.innerText = `${data.name}: ${data.text}`;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+  });
 
-    socket.emit('join', "<%= userId %>");
+  // Handle matched chat start
+  socket.on('chat start', data => {
+    const div = document.createElement('div');
+    div.innerText = data.message;
+    div.style.color = "green";
+    messages.appendChild(div);
+  });
 
-    socket.on('chat message', data => {
-      const div = document.createElement('div');
-      div.innerText = `${data.name}: ${data.text}`;
-      messages.appendChild(div);
-    });
+  function send() {
+    const input = document.getElementById('input');
+    const msg = input.value;
+    socket.emit('chat message', { name: "<%= name %>", text: msg });
+    input.value = '';
+  }
 
-    function send() {
-      const input = document.getElementById('input');
-      const msg = input.value;
-      socket.emit('chat message', { name: "<%= name %>", text: msg });
-      input.value = '';
-    }
-
-    function newChat() {
-      alert("Connecting to a new user... (real logic coming soon)");
-      // In next steps, this will actually connect users
-    }
-  </script>
-</body>
-</html>
+  function newChat() {
+    messages.innerHTML = ''; // Clear old messages
+    socket.emit('new chat');
+  }
+</script>
