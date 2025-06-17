@@ -1,46 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Swipe Spark Chat</title>
-  <link rel="stylesheet" href="/style.css" />
-  <script src="/socket.io/socket.io.js"></script>
+  <title>Swipe Spark - Chat</title>
+  <style>
+    body { font-family: Arial; }
+    #messages { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll; }
+    input, button { padding: 10px; margin-top: 5px; }
+  </style>
 </head>
-<body class="chat-page">
-  <header>
-    <h2>💬 Swipe Spark</h2>
-    <form action="/new-chat" method="POST">
-      <button type="submit" class="new-chat">+ New Chat</button>
-    </form>
-  </header>
+<body>
+  <h2>Welcome <%= name %> 👋</h2>
+  <p>Your ID: <%= userId %></p>
 
-  <div class="chat-box">
-    <ul id="messages"></ul>
-    <form id="form">
-      <input id="input" autocomplete="off" placeholder="Type a message..." />
-      <button>Send</button>
-    </form>
-  </div>
+  <div id="messages"></div>
+  <input id="input" placeholder="Type a message" />
+  <button onclick="send()">Send</button>
+  <br><br>
+  <button onclick="newChat()">💬 New Chat</button>
 
+  <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io();
-    const form = document.getElementById('form');
-    const input = document.getElementById('input');
     const messages = document.getElementById('messages');
 
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      if (input.value) {
-        socket.emit('chat message', input.value);
-        input.value = '';
-      }
+    socket.emit('join', "<%= userId %>");
+
+    socket.on('chat message', data => {
+      const div = document.createElement('div');
+      div.innerText = `${data.name}: ${data.text}`;
+      messages.appendChild(div);
     });
 
-    socket.on('chat message', (msg) => {
-      const item = document.createElement('li');
-      item.textContent = msg;
-      messages.appendChild(item);
-      window.scrollTo(0, document.body.scrollHeight);
-    });
+    function send() {
+      const input = document.getElementById('input');
+      const msg = input.value;
+      socket.emit('chat message', { name: "<%= name %>", text: msg });
+      input.value = '';
+    }
+
+    function newChat() {
+      alert("Connecting to a new user... (real logic coming soon)");
+      // In next steps, this will actually connect users
+    }
   </script>
 </body>
 </html>

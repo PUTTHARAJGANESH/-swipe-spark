@@ -2,13 +2,42 @@
 <html>
 <head>
   <title>Swipe Spark - Login</title>
-  <link rel="stylesheet" href="/style.css" />
+  <style>
+    body {
+      font-family: Arial;
+      display: flex;
+      height: 100vh;
+      justify-content: center;
+      align-items: center;
+      background: #fef6f9;
+    }
+    .login-box {
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+    input {
+      padding: 10px;
+      margin: 10px 0;
+      width: 100%;
+    }
+    button {
+      padding: 10px;
+      background: #ff4d88;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+    }
+  </style>
 </head>
-<body class="login-page">
+<body>
   <div class="login-box">
-    <h1>Swipe Spark 💖</h1>
+    <h2>💘 Swipe Spark Login</h2>
     <form action="/chat" method="POST">
       <input type="text" name="name" placeholder="Enter your name" required />
+      <input type="password" name="password" placeholder="Enter your password" required />
       <button type="submit">Login</button>
     </form>
   </div>
